@@ -2,7 +2,7 @@ import axios from 'axios'
 export const baseUrl = process.env.NEXT_PUBLIC_BASE_URL
 
 const MainApi = axios.create({
-    baseURL: baseUrl.replace(/\/$/, ''),
+    baseURL: baseUrl?.replace(/\/$/, '') || 'https://carrotfoodelivery.com',
 })
 
 MainApi.interceptors.request.use(function (config) {
