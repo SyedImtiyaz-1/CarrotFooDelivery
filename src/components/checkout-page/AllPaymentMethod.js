@@ -432,6 +432,7 @@ const AllPaymentMethod = ({
                                                 getPaymentMethod({
                                                     name: 'cash_on_delivery',
                                                     image: money,
+                                                    title: t('Cash on Delivery'),
                                                 })
                                             }}
                                             sx={{
@@ -484,6 +485,7 @@ const AllPaymentMethod = ({
                                                 getPaymentMethod({
                                                     name: 'cash_on_delivery',
                                                     image: money,
+                                                    title: t('Cash on Delivery'),
                                                 })
                                             }}
                                             sx={{
@@ -537,16 +539,7 @@ const AllPaymentMethod = ({
                                 fontWeight="600"
                                 color={theme.palette.neutral[1000]}
                             >
-                                {t('Pay Via Online')}
-                                <Typography
-                                    component="span"
-                                    fontSize="10px"
-                                    ml="5px"
-                                    fontWeight="600"
-                                    color={theme.palette.neutral[1000]}
-                                >
-                                    {t('(Faster & secure way to pay bill)')}
-                                </Typography>
+                                {t('Pay via UPI')}
                             </Typography>
 
                             <Grid container rowGap="2.1rem">
@@ -683,6 +676,7 @@ const AllPaymentMethod = ({
                                         getPaymentMethod({
                                             name: 'cash_on_delivery',
                                             image: money,
+                                            title: t('Cash on Delivery'),
                                         })
                                     }}
                                     sx={{

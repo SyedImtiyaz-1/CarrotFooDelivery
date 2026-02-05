@@ -93,8 +93,16 @@ const PlaceOrder = (props) => {
                                 }}
                             >
                                 <CustomStackFullWidth alignItems="center" justifyContent="center">
-                                    <span style={{ fontWeight: '600' }}>{t('Payment Mode')}</span>
-                                    <span style={{ fontSize: '10px' }}>{t('(COD/UPI)')}</span>
+                                    {paymentMethodDetails?.title ? (
+                                        <span style={{ fontWeight: '600', textAlign: 'center' }}>
+                                            {t(paymentMethodDetails.title)}
+                                        </span>
+                                    ) : (
+                                        <>
+                                            <span style={{ fontWeight: '600' }}>{t('Payment Mode')}</span>
+                                            <span style={{ fontSize: '10px' }}>{t('(COD/UPI)')}</span>
+                                        </>
+                                    )}
                                 </CustomStackFullWidth>
                             </Button>
                         </Grid>

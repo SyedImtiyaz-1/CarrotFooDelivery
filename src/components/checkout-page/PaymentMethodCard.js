@@ -12,7 +12,7 @@ const PaymentMethodCard = (props) => {
     const theme = useTheme()
     const dispatch = useDispatch()
     const handleChange = () => {
-        getPaymentMethod({ name: type, image: image })
+        getPaymentMethod({ name: type, image: image, title: paymentType })
         dispatch(setOfflineInfoStep(0))
     }
 

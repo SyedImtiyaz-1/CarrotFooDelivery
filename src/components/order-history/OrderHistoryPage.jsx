@@ -20,7 +20,7 @@ import CustomEmptyResult from '../empty-view/CustomEmptyResult'
 export const buttonsData = [
     { title: 'Ongoing', value: 'running-orders' },
     { title: 'Previous', value: 'list' },
-    { title: 'Subscription', value: 'order-subscription-list' },
+    //{ title: 'Subscription', value: 'order-subscription-list' },
 ]
 import Meta from '../Meta'
 import { noOrderFound } from '@/utils/LocalImages'

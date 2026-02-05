@@ -1080,7 +1080,7 @@ const CheckoutPage = ({ isDineIn }) => {
             setSelected({ name: '', image: null })
         } else {
             setSelected({ name: 'wallet', image: wallet })
-            setPaymentMethodDetails({ name: 'wallet', image: wallet })
+            setPaymentMethodDetails({ name: 'wallet', image: wallet, title: t('Wallet') })
             setPaymenMethod('wallet')
             setSwitchToWallet(true)
         }
@@ -1177,7 +1177,7 @@ const CheckoutPage = ({ isDineIn }) => {
     }
     const agreeToWallet = () => {
         setSelected({ name: 'wallet', image: wallet })
-        setPaymentMethodDetails({ name: 'wallet', image: wallet })
+        setPaymentMethodDetails({ name: 'wallet', image: wallet, title: t('Wallet') })
         setPaymenMethod('wallet')
         setSwitchToWallet(true)
         setUsePartialPayment(false)
