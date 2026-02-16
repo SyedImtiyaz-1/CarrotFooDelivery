@@ -95,6 +95,7 @@ const DineInPreferableTime = dynamic(
     () => import('@/components/checkout-page/DineInPreferableTime'),
     { ssr: false }
 )
+import PaymentFailedModal from './PaymentFailedModal';
 
 
 const currentDate = moment();
@@ -161,6 +162,7 @@ const CheckoutPage = ({ isDineIn }) => {
     const [couponDiscount, setCouponDiscount] = useState(null)
     const [scheduleAt, setScheduleAt] = useState('now')
     const [orderSuccess, setOrderSuccess] = useState(false)
+    const [openPaymentFailedModal, setOpenPaymentFailedModal] = useState(false)
     const [taxAmount, setTaxAmount] = useState(0)
     const [cutlery, setCutlery] = useState(0)
     const [unavailable_item_note, setUnavailable_item_note] = useState(null)
@@ -345,6 +347,48 @@ const CheckoutPage = ({ isDineIn }) => {
         'order-place',
         OrderApi.placeOrder
     )
+    const { mutate: cancelOrderMutation, isLoading: cancelOrderLoading } = useMutation(
+        'order-cancel',
+        OrderApi.CancelOrder
+    )
+    const { mutate: updatePaymentMethodMutation, isLoading: updatePaymentLoading } = useMutation(
+        'order-payment-method-update',
+        OrderApi.FailedPaymentMethodUpdate
+    )
+
+    const handleCancelOrder = () => {
+        const formData = {
+            order_id: orderId,
+            reason: 'Payment Failed',
+            _method: 'put',
+            guest_id: getGuestId()
+        }
+        cancelOrderMutation(formData, {
+            onSuccess: (res) => {
+                toast.success(res?.data?.message)
+                setOpenPaymentFailedModal(false)
+                router.push('/home')
+            },
+            onError: onErrorResponse
+        })
+    }
+
+    const handleSwitchToCOD = () => {
+        const formData = {
+            order_id: orderId,
+            _method: 'put',
+            payment_method: 'cash_on_delivery'
+        }
+        updatePaymentMethodMutation(formData, {
+            onSuccess: (res) => {
+                toast.success(res?.data?.message)
+                setOpenPaymentFailedModal(false)
+                setOrderSuccess(true)
+            },
+            onError: onErrorResponse
+        })
+    }
+
     const userOnSuccessHandler = (res) => {
         dispatch(setUser(res?.data))
         dispatch(setWalletAmount(res?.data?.wallet_balance))
@@ -783,14 +827,14 @@ const CheckoutPage = ({ isDineIn }) => {
                                 },
                                 modal: {
                                     ondismiss: function () {
-                                        toast.error('Payment Cancelled');
+                                        setOpenPaymentFailedModal(true)
                                     }
                                 }
                             };
 
                             const rzp1 = new window.Razorpay(options);
                             rzp1.on('payment.failed', function (response) {
-                                toast.error(response.error.description);
+                                setOpenPaymentFailedModal(true)
                             });
                             rzp1.open();
 
@@ -817,6 +861,7 @@ const CheckoutPage = ({ isDineIn }) => {
             )
         }
     }
+
     const placeOrder = () => {
         localStorage.setItem('access', totalAmount)
         if (page !== 'campaign') {
@@ -1674,6 +1719,16 @@ const CheckoutPage = ({ isDineIn }) => {
                         changeAmount={changeAmount}
                     />
                 </CustomModal>
+            )}
+            {openPaymentFailedModal && (
+                <PaymentFailedModal
+                    open={openPaymentFailedModal}
+                    handleClose={() => setOpenPaymentFailedModal(false)}
+                    handleCancelOrder={handleCancelOrder}
+                    handleSwitchToCOD={handleSwitchToCOD}
+                    cancelOrderLoading={cancelOrderLoading}
+                    updatePaymentLoading={updatePaymentLoading}
+                />
             )}
         </Grid>
     )

@@ -272,8 +272,8 @@ const VisitAgain = () => {
     }
 
     return (
-        <Grid container spacing={3} paddingTop="30px">
-            <Grid item xs={12} md={3.5}>
+        <Grid container spacing={3} paddingTop={{ xs: '10px', md: '30px' }}>
+            <Grid item xs={12} md={3.5} sx={{ display: { xs: 'none', md: 'block' } }}>
                 <MapSetionWrapper>
                     <div className="map-overly">
                         <CustomStackFullWidth alignItems="center">

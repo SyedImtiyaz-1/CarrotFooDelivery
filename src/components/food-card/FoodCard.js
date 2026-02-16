@@ -10,6 +10,7 @@ import { useTranslation } from 'react-i18next'
 import { useMutation } from 'react-query'
 import { useDispatch, useSelector } from 'react-redux'
 import useAddCartItem from '../../hooks/react-query/add-cart/useAddCartItem'
+import useCartItemUpdate from '../../hooks/react-query/add-cart/useCartItemUpdate'
 import { onErrorResponse } from '../ErrorResponse'
 import { RTL } from '../RTL/RTL'
 import { getGuestId } from '../checkout-page/functions/getGuestUserId'
@@ -155,6 +156,7 @@ const FoodCard = ({
             setClearCartModal(false)
         }
     }
+    const { mutate: updateMutate } = useCartItemUpdate()
     const addToCartHandler = () => {
         const itemObject = {
             guest_id: getGuestId(),
@@ -173,10 +175,30 @@ const FoodCard = ({
                 (item) => item.restaurant_id === product.restaurant_id
             )
             if (isRestaurantExist) {
-                addToCartMutate(itemObject, {
-                    onSuccess: handleSuccess,
-                    onError: onErrorResponse,
-                })
+                const existingItem = cartList.find((item) => item.id === product.id)
+                if (existingItem) {
+                    const updateItemObject = {
+                        cart_id: existingItem.cartItemId,
+                        guest_id: getGuestId(),
+                        model: modalData[0]?.available_date_starts ? 'ItemCampaign' : 'Food',
+                        add_on_ids: [],
+                        add_on_qtys: [],
+                        item_id: modalData[0]?.id,
+                        price: modalData[0]?.price,
+                        quantity: existingItem.quantity + 1,
+                        variations: [],
+                        variation_options: []
+                    }
+                    updateMutate(updateItemObject, {
+                        onSuccess: handleSuccess,
+                        onError: onErrorResponse,
+                    })
+                } else {
+                    addToCartMutate(itemObject, {
+                        onSuccess: handleSuccess,
+                        onError: onErrorResponse,
+                    })
+                }
             } else {
                 if (cartList.length !== 0) {
                     handleClearCartModalOpen()

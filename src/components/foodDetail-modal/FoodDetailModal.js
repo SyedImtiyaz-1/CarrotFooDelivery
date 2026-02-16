@@ -102,6 +102,19 @@ const FoodDetailModal = ({
             )
             setAddOns([])
             setSelectedOptions([])
+
+            if (cartList?.length > 0 && !productUpdate) {
+                const existingItem = cartList.find((item) => {
+                    return (
+                        item.id === res.id &&
+                        (!item.selectedOptions || item.selectedOptions.length === 0) &&
+                        (!item.selectedAddons || item.selectedAddons.length === 0)
+                    )
+                })
+                if (existingItem) {
+                    setQuantity(existingItem.quantity)
+                }
+            }
         }
     }
     const {
@@ -366,19 +379,18 @@ const FoodDetailModal = ({
                     // Check if item ID matches
                     if (item.id !== modalData[0].id) return false;
 
-                    // Compare variations
-                    // Using JSON stringify for deep comparison of complex objects is simple but effective here
-                    // assuming the structure is consistent. 
-                    // Ideally we should compare sorted variation values but typically the structure is preserved.
-                    const existingVariations = JSON.stringify(item.variations);
-                    const newVariations = JSON.stringify(getNewVariationForDispatch());
+                    // Compare variations by option_id (more robust than JSON.stringify)
+                    // We simply check if the selected option IDs match.
+                    const getOptionIds = (options) => options?.map(opt => opt.option_id).sort().join(',') || '';
+
+                    const existingOptionIds = getOptionIds(item.selectedOptions);
+                    const currentOptionIds = getOptionIds(selectedOptions);
 
                     // Compare addons
-                    // We need to compare selected addons. 
-                    const existingAddons = JSON.stringify(item.selectedAddons?.map(addon => addon.id).sort());
-                    const newAddons = JSON.stringify(add_on?.map(addon => addon.id).sort());
+                    const existingAddons = item.selectedAddons?.map(addon => addon.id).sort().join(',') || '';
+                    const newAddons = add_on?.map(addon => addon.id).sort().join(',') || '';
 
-                    return existingVariations === newVariations && existingAddons === newAddons;
+                    return existingOptionIds === currentOptionIds && existingAddons === newAddons;
                 });
 
                 if (existingItem && !productUpdate) {

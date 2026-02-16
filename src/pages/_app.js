@@ -26,6 +26,8 @@ import '../styles/nprogress.css'
 import { createTheme } from '../theme/index'
 import createEmotionCache from '../utils/create-emotion-cache'
 
+import { suppressMetaMaskErrors } from '../utils/suppressMetaMask'
+
 Router.events.on('routeChangeStart', nProgress.start)
 Router.events.on('routeChangeError', nProgress.done)
 Router.events.on('routeChangeComplete', nProgress.done)
@@ -40,6 +42,12 @@ function App({ Component, pageProps, emotionCache = clientSideEmotionCache }) {
     const Footer = dynamic(() => import('../components/footer/Footer'), {
         ssr: false,
     })
+
+    // Call suppression logic immediately
+    if (typeof window !== 'undefined') {
+        suppressMetaMaskErrors();
+    }
+
     useEffect(() => {
         const userLanguage = localStorage.getItem('language')
         if (!userLanguage) {
@@ -57,6 +65,9 @@ function App({ Component, pageProps, emotionCache = clientSideEmotionCache }) {
         }
         setViewFooter(true)
     }, [])
+
+    useEffect(() => {
+    }, []);
 
     let persistor = persistStore(store)
 
@@ -95,7 +106,7 @@ function App({ Component, pageProps, emotionCache = clientSideEmotionCache }) {
                                     <Head>
                                         <title>{t('Loading...')}</title>
                                     </Head>
-                                    <WrapperForApp pathname={router.pathname}>
+                                    <WrapperForApp pathname={router?.pathname}>
                                         <ScrollToTop />
                                         {router.pathname !== '/maintenance' && (
                                             <Navigation />
@@ -108,7 +119,7 @@ function App({ Component, pageProps, emotionCache = clientSideEmotionCache }) {
                                                 mt: {
                                                     xs:
                                                         router.pathname ===
-                                                        '/home'
+                                                            '/home'
                                                             ? '2.5rem'
                                                             : '2rem',
                                                     md:
@@ -122,7 +133,7 @@ function App({ Component, pageProps, emotionCache = clientSideEmotionCache }) {
                                         >
                                             {router.pathname !== '/' &&
                                                 router.pathname !==
-                                                    '/checkout' &&
+                                                '/checkout' &&
                                                 router.pathname !== '/chat' && (
                                                     <FloatingCardManagement
                                                         zoneid={zoneid}
@@ -134,7 +145,7 @@ function App({ Component, pageProps, emotionCache = clientSideEmotionCache }) {
                                         </Box>
                                         {viewFooter &&
                                             router.pathname !==
-                                                '/maintenance' && (
+                                            '/maintenance' && (
                                                 <Footer
                                                     languageDirection={
                                                         value?.settings
